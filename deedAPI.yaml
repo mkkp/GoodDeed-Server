@@ -61,7 +61,7 @@ paths:
         405:
           description: "Validation exception"
 
-  /pet/{petId}:
+  /deed/{deedId}:
     get:
       tags:
       - "Deed"
@@ -91,13 +91,13 @@ paths:
 
 
 securityDefinitions:
-  petstore_auth:
+  goodDeed_auth:
     type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    authorizationUrl: "todo"
     flow: "implicit"
     scopes:
-      write:pets: "modify deeds in your account"
-      read:pets: "read your deeds"
+      write:deeds: "modify deeds in your account"
+      read:deeds: "read your deeds"
   api_key:
     type: "apiKey"
     name: "api_key"
