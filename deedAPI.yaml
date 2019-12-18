@@ -160,3 +160,43 @@ components:
         id:
           type: string
           readOnly: true
+        type:
+          type: string
+          example: Feature
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+              example: Point
+            coordinates:
+              type: array
+              items:
+                type: integer
+              minItems: 2
+              maxItems: 2
+          required:
+          - type
+          - coordinates
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        createdBy:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+            nickname:
+              type: string
+          required:
+          - email
+          - nickname
+      required:
+      - type
+      - geometry
+      - description
+      - createdBy
