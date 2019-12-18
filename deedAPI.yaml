@@ -1,140 +1,162 @@
-swagger: "2.0"
+openapi: 3.0.0
+
 info:
   description: "This is the X-mas MKKP Good-Deed Map Server's REST API"
   version: "0.0.1"
   title: "MKKP Good-Deed Map"
   termsOfService: "https://mkkp.party/"
   contact:
-    email: "apiteam@swagger.io"
+    email: "ketfarkukutya@gmail.com"
   license:
     name: "MIT"
     url: "https://opensource.org/licenses/MIT"
-host: "good-deed.mkkp.party"
-basePath: "/v1"
-tags:
-- name: "deed"
-  description: "Basic operations on Deeds"
-schemes:
-- "https"
-- "http"
-paths:
-  /deed:
-    post:
-      tags:
-      - "Deed"
-      summary: "Add a new deed"
-      description: "This endpoint creates a new good-deed with its location and deed description"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Deed object"
-        required: true
-        schema:
-          $ref: "#/definitions/Deed"
-      responses:
-        405:
-          description: "Invalid input"
-    put:
-      tags:
-      - "Deed"
-      summary: "Update an existing deed"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Deed object to update"
-        required: true
-        schema:
-          $ref: "#/definitions/Deed"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Deed not found"
-        405:
-          description: "Validation exception"
 
-  /deed/{deedId}:
+servers:
+- url: "https://good-deed.mkkp.party/v1"
+
+tags:
+- name: Deeds
+  description: "Basic operations on Deeds"
+
+paths:
+  /deeds:
     get:
       tags:
-      - "Deed"
-      summary: "Find deed by ID"
-      description: "Returns a single deed"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "deedId"
-        in: "path"
-        description: "ID of deed to return"
-        required: true
-        type: "integer"
-        format: "int64"
+      - Deeds
+      summary: "Get all deeds"
+      description: "This endpoint returns all good-deeds"
       responses:
         200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Deed"
-        400:
-          description: "Invalid ID supplied"
+          description: "List of deeds"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureCollection'
+    post:
+      tags:
+      - Deeds
+      summary: "Add a new deed"
+      description: "This endpoint creates a new good-deed with its location and deed description"
+      requestBody:
+        description: "Deed object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Deed'
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deed'
+        405:
+          description: "Invalid input"
+  /deeds/{deedId}:
+    get:
+      tags:
+      - Deeds
+      summary: "Find deed by ID"
+      description: "Returns a single deed"
+      parameters:
+      - name: deedId
+        in: path
+        description: "ID of deed to return"
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: "Deed with matching ID"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deed'
         404:
-          description: "Deed not found"
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+      - Deeds
+      summary: "Update an existing deed"
+      parameters:
+      - name: deedId
+        in: path
+        description: "ID of deed to return"
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: "Deed object to update"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Deed'
+      responses:
+        200:
+          description: "Updated deed object"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deed'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        405:
+          description: "Invalid input"
       security:
-      - api_key: []
+      - adminAuth: []
+    delete:
+      tags:
+      - Deeds
+      summary: "Delete a deed"
+      description: "Deletes a single deed"
+      parameters:
+      - name: deedId
+        in: path
+        description: "ID of deed to return"
+        required: true
+        schema:
+          type: integer
+      responses:
+        204:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+      security:
+      - adminAuth: []
 
-
-
-securityDefinitions:
-  goodDeed_auth:
-    type: "oauth2"
-    authorizationUrl: "todo"
-    flow: "implicit"
-    scopes:
-      write:deeds: "modify deeds in your account"
-      read:deeds: "read your deeds"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
-
-definitions:
-
-  Tag:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Tag"
-  Deed:
-    type: "object"
-    required:
-    - "name"
-    - "photoUrls"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+components:
+  securitySchemes:
+    adminAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Success:
+      description: "Successful operation"
+    NotFound:
+      description: "Deed not found"
+    Unauthorized:
+      description: "Access token is missing or invalid"
+  schemas:
+    FeatureCollection:
+      type: object
+      properties:
+        type:
+          type: string
+          example: FeatureCollection
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deed'
+    Deed:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
