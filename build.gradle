@@ -2,10 +2,11 @@ plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
+	id 'com.google.cloud.tools.jib' version '1.8.0'
 }
 
 group = 'com.ketfarkukutya'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '8'
 
 repositories {
@@ -24,4 +25,18 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+jib {
+	from {
+		image = 'openjdk:8-alpine'
+	}
+	to {
+		image = 'mkkp/gooddeed-server'
+		tags = [version]
+	}
+	container {
+		args = ['--spring.profiles.active=prod']
+		ports = ['80']
+	}
 }
