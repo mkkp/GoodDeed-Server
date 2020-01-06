@@ -8,17 +8,17 @@ public class DeedGeometry {
     private String type = "Point";
 
     @NotNull
-    private List<Integer> coordinates = null;
+    private List<Double> coordinates = null;
 
     public String getType() {
         return type;
     }
 
-    public List<Integer> getCoordinates() {
+    public List<Double> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(int lon, int lat) {
+    public void setCoordinates(double lon, double lat) {
         this.coordinates = Arrays.asList(lon, lat);
     }
 }
