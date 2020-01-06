@@ -38,5 +38,6 @@ jib {
 	container {
 		args = ['--spring.profiles.active=prod']
 		ports = ['80']
+		useCurrentTimestamp = true
 	}
 }
