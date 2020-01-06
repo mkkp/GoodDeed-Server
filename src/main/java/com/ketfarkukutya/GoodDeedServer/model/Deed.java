@@ -22,6 +22,9 @@ public class Deed {
     private DeedGeometry geometry = new DeedGeometry();
 
     @NotNull
+    private DeedReportType reportType;
+
+    @NotNull
     private String description = null;
 
     @Valid
@@ -56,6 +59,14 @@ public class Deed {
 
     public void setCoordinates(int lon, int lat) {
         this.geometry.setCoordinates(lon, lat);
+    }
+
+    public DeedReportType getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(DeedReportType reportType) {
+        this.reportType = reportType;
     }
 
     public String getDescription() {
