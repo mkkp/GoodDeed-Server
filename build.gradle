@@ -2,10 +2,11 @@ plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
+	id 'com.google.cloud.tools.jib' version '1.8.0'
 }
 
 group = 'com.ketfarkukutya'
-version = '0.0.1-SNAPSHOT'
+version = '0.1.0'
 sourceCompatibility = '8'
 
 repositories {
@@ -14,8 +15,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compile 'org.hibernate:hibernate-validator:6.1.0.Final'
+	implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
+	implementation 'org.springframework.security:spring-security-config'
+	implementation 'org.hibernate:hibernate-validator:6.1.0.Final'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
@@ -24,4 +29,19 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+jib {
+	from {
+		image = 'openjdk:8-alpine'
+	}
+	to {
+		image = 'mkkp/gooddeed-server'
+		tags = [version]
+	}
+	container {
+		args = ['--spring.profiles.active=prod']
+		ports = ['80']
+		useCurrentTimestamp = true
+	}
 }
